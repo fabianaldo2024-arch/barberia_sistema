@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.env
+
+# Base de datos local [3]
+db.sqlite3
+
+# Static files [10]
+static_root/
