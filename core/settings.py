@@ -103,12 +103,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+LANGUAGE_CODE = 'es-ar' # O 'es-es' según tu país
+TIME_ZONE = 'America/Argentina/Buenos_Aires' # Ajusta a tu zona horaria
 USE_I18N = True
-
+USE_L10N = True
 USE_TZ = True
 
 
@@ -135,20 +133,33 @@ INSTALLED_APPS = [
     'apps.comunicaciones',
 ]
 
-# Configuración para envío de correos (Ejemplo con Gmail)
+# Configuración de Email SMTP
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'tu-barberia@gmail.com'  # Tu correo
-EMAIL_HOST_PASSWORD = 'tu-contraseña-de-aplicacion'  # Tu contraseña protegida
+EMAIL_HOST_USER = 'doalperez12@gmail.com'
+EMAIL_HOST_PASSWORD = 'tu-contraseña-de-aplicacion'
+DEFAULT_FROM_EMAIL = 'Barbería Sistema <dolperez12@gmail.com>'
 
 # Configuración de Celery
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_TIMEZONE = TIME_ZONE  # Usa la misma zona horaria de tu proyecto
 
-# Registro de django-celery-beat en las aplicaciones
-INSTALLED_APPS += [
-    'django_celery_beat',
+INSTALLED_APPS = [
+    # Aplicaciones básicas y obligatorias de Django
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+
+    # Tus aplicaciones locales
+    'apps.turnos',
+
+    # Librerías externas necesarias según los requisitos técnicos
+    'import_export',        # Para exportar clientes a Excel/CSV
+    'django_celery_beat',   # Para la periodicidad de los recordatorios de 2 horas
 ]

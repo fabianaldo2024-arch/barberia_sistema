@@ -1,12 +1,23 @@
 from django.contrib import admin
-from .models import Barbero, Turno
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
+from .models import Turno
 
-@admin.register(Barbero)
-class BarberoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'especialidad')
-    search_fields = ('nombre',)
+# Definimos qué datos se van a exportar (Recurso)
+class TurnoResource(resources.ModelResource):
+    class Meta:
+        model = Turno
+        # Solo exportamos los campos útiles para marketing
+        fields = ('cliente_nombre', 'cliente_celular', 'acepta_promociones')
+        export_order = ('cliente_nombre', 'cliente_celular', 'acepta_promociones')
 
+# Configuramos el panel de administración con capacidad de exportación
 @admin.register(Turno)
-class TurnoAdmin(admin.ModelAdmin):
-    list_display = ('cliente_nombre', 'barbero', 'fecha_hora', 'estado')
-    list_filter = ('estado', 'barbero', 'fecha_hora')
+class TurnoAdmin(ImportExportModelAdmin): # Cambiamos admin.ModelAdmin por este
+    resource_class = TurnoResource # Conectamos el recurso de exportación
+    
+    # Configuración visual que ya tenías
+    list_display = ('fecha_hora', 'cliente_nombre', 'cliente_celular', 'barbero', 'acepta_promociones')
+    list_filter = ('barbero', 'fecha_hora', 'acepta_promociones')
+    search_fields = ('cliente_nombre', 'cliente_celular')
+    ordering = ('fecha_hora',)

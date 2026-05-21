@@ -36,5 +36,21 @@ class Turno(models.Model):
     estado = models.CharField(max_length=20, choices=ESTADOS, default='confirmado')
     creado_el = models.DateTimeField(auto_now_add=True)
 
+    
+    # Nuevo campo de consentimiento para promociones
+    acepta_promociones = models.BooleanField(
+        default=False, 
+        verbose_name="Acepta recibir promociones y novedades"
+    )
+
+    def __str__(self):
+        return f"Turno de {self.cliente_nombre} - Consentimiento: {self.acepta_promociones}"
+
+
     def __str__(self):
         return f"{self.cliente_nombre} - {self.fecha_hora}"
+
+
+
+
+
