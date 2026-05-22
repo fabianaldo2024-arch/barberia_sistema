@@ -24,3 +24,27 @@ def solicitar_turno(request):
         form = TurnoForm()
     
     return render(request, 'turnos/solicitar_turno.html', {'form': form})
+
+# NUEVO: Vista
+
+from django.contrib.admin.views.decorators import staff_member_required
+from .tasks import enviar_promocion_masiva
+
+@staff_member_required
+def panel_promociones(request):
+    mensaje_estado = None
+    if request.method == 'POST':
+        texto_promo = request.POST.get('mensaje')
+        if texto_promo:
+            # Disparamos la tarea en segundo plano usando Celery
+            enviar_promocion_masiva.delay(texto_promo)
+            mensaje_estado = "¡La campaña ha sido enviada al servidor de mensajería!"
+            
+    return render(request, 'turnos/panel_promociones.html', {'mensaje_estado': mensaje_estado})
+
+# NUEVO
+
+def dar_de_baja_promociones(request, celular):
+    # Buscamos todos los registros de ese celular y desactivamos el consentimiento
+    Turno.objects.filter(cliente_celular=celular).update(acepta_promociones=False)
+    return render(request, 'turnos/baja_exitosa.html')

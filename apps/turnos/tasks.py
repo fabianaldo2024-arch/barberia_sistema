@@ -38,7 +38,6 @@ def enviar_recordatorio_turno(turno_id):
             f"💈 Barbero: {turno.barbero.nombre}\n"
             f"📍 Dirección: Calle Falsa 123"
         )
-
         client.messages.create(
             body=cuerpo,
             from_=os.getenv('TWILIO_PHONE_NUMBER'),
@@ -47,3 +46,20 @@ def enviar_recordatorio_turno(turno_id):
         return f"Recordatorio enviado a {turno.cliente_celular}"
     except Exception as e:
         return f"Error en Twilio: {e}"
+
+@shared_task
+def enviar_promocion_masiva(mensaje_texto):
+    """Envía promociones solo a clientes con consentimiento (Punto 5 especificación)."""
+    # Filtramos por consentimiento y evitamos duplicados de celular
+    clientes_aptos = Turno.objects.filter(acepta_promociones=True).distinct('cliente_celular')
+    
+    contador = 0
+    for cliente in clientes_aptos:
+        try:
+            # Aquí se ejecutaría el envío real
+            print(f"Enviando promo a {cliente.cliente_celular}")
+            contador += 1
+        except Exception as e:
+            print(f"Error: {e}")
+            
+    return f"Campaña finalizada. {contador} mensajes procesados."
