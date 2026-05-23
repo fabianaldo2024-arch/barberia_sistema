@@ -1,91 +1,14 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitar Turno - Barbería</title>
-    <!-- Importación de Bootstrap para interfaz responsive y moderna [2, 3] -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f8f9fa; }
-        .form-container { max-width: 600px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .barber-header { text-align: center; margin-bottom: 30px; }
-    </style>
-</head>
-<body>
+{% extends 'turnos/base.html' %}
+{% load static %}
 
-<div class="container">
-    <div class="form-container">
-        <div class="barber-header">
-            <h2 class="display-6">Reserva tu Turno</h2>
-            <p class="text-muted">Completa tus datos para agendar tu cita</p>
-        </div>
-
-        <form method="post" novalidate>
-            {% csrf_token %} <!-- Protección obligatoria de Django [4] -->
-
-            <!-- Campo: Nombre Completo [1] -->
-            <div class="mb-3">
-                <label for="{{ form.cliente_nombre.id_for_label }}" class="form-label">Nombre Completo</label>
-                {{ form.cliente_nombre }}
-                {% if form.cliente_nombre.errors %}
-                    <div class="text-danger small">{{ form.cliente_nombre.errors }}</div>
-                {% endif %}
-            </div>
-
-            <!-- Campo: Celular con código de área [1] -->
-            <div class="mb-3">
-                <label for="{{ form.cliente_celular.id_for_label }}" class="form-label">Teléfono Celular (con código de área)</label>
-                {{ form.cliente_celular }}
-                <div class="form-text">Ejemplo: 1122334455</div>
-                {% if form.cliente_celular.errors %}
-                    <div class="text-danger small">{{ form.cliente_celular.errors }}</div>
-                {% endif %}
-            </div>
-
-            <!-- Campo: Selección de Barbero [1] -->
-            <div class="mb-3">
-                <label for="{{ form.barbero.id_for_label }}" class="form-label">Elige tu Barbero</label>
-                {{ form.barbero }}
-                {% if form.barbero.errors %}
-                    <div class="text-danger small">{{ form.barbero.errors }}</div>
-                {% endif %}
-            </div>
-
-            <!-- Campo: Fecha y Hora (Solo horarios disponibles en horario comercial) [1] -->
-            <div class="mb-3">
-                <label for="{{ form.fecha_hora.id_for_label }}" class="form-label">Fecha y Hora</label>
-                {{ form.fecha_hora }}
-                <div class="form-text">Horario: Lun-Vie 09:00-19:00, Sáb 09:00-14:00 [1].</div>
-                {% if form.fecha_hora.errors %}
-                    <div class="text-danger small">{{ form.fecha_hora.errors }}</div>
-                {% endif %}
-            </div>
-
-            <!-- Sección: Consentimiento para Promociones [4, 5] -->
-            <div class="card bg-light mb-4">
-                <div class="card-body">
-                    <div class="form-check">
-                        {{ form.acepta_promociones }}
-                        <label class="form-check-label fw-bold" for="{{ form.acepta_promociones.id_for_label }}">
-                            Deseo recibir promociones y novedades
-                        </label>
-                    </div>
-                    <p class="text-muted small mt-2 mb-0">
-                        Al marcar esta casilla, autorizas el envío de novedades por WhatsApp o SMS. 
-                        <strong>Podrás darte de baja en cualquier momento</strong> para respetar tu privacidad [5].
-                    </p>
-                </div>
-            </div>
-
-            <!-- Botón de Confirmación -->
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-dark btn-lg">Confirmar mi Turno</button>
-            </div>
-        </form>
-    </div>
+{% block content %}
+<!-- Todo lo que pongas AQUÍ ADENTRO se verá debajo del logo -->
+<div class="card shadow p-4">
+    <h2 class="text-center mb-4">Reserva tu Turno</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-dark w-100">Confirmar mi Turno</button>
+    </form>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock %}
