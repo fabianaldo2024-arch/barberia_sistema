@@ -1,4 +1,8 @@
 from django.contrib import admin
+
+from django.utils.html import format_html
+from django.templatetags.static import static
+
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from .models import Turno
@@ -21,3 +25,13 @@ class TurnoAdmin(ImportExportModelAdmin): # Cambiamos admin.ModelAdmin por este
     list_filter = ('barbero', 'fecha_hora', 'acepta_promociones')
     search_fields = ('cliente_nombre', 'cliente_celular')
     ordering = ('fecha_hora',)
+
+# NUEVO
+
+# Personalización del encabezado del Admin
+admin.site.site_header = format_html(
+    '<img src="{}" style="height: 40px; margin-right: 10px;"> Gestión de Barbería',
+    static('img/logo_barberia.png')
+)
+admin.site.site_title = "Barbería Sistema Admin"
+admin.site.index_title = "Panel de Control de Turnos"
