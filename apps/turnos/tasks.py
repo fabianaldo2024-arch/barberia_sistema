@@ -5,6 +5,16 @@ from django.conf import settings
 from twilio.rest import Client
 from .models import Turno
 
+from celery import shared_task
+from django.utils import timezone
+
+@shared_task
+def limpiar_turnos_viejos():
+    # Borra todos los turnos cuya fecha y hora sean menores a la actual
+    ahora = timezone.now()
+    cantidad, _ = Turno.objects.filter(fecha_hora__lt=ahora).delete()
+    return f"Se han eliminado {cantidad} turnos antiguos."
+
 @shared_task
 def notificar_recepcionista_nuevo_turno(datos_turno):
     # ... lógica de envío de mail por SMTP [3] ...
@@ -53,8 +63,10 @@ def enviar_promocion_masiva(texto_promo):
 #NUEVO
 @shared_task
 def enviar_recordatorio_whatsapp(turno_id):
-    # ... lógica de envío por Twilio/WhatsApp [3] ...
-    pass
+    turno = Turno.objects.get(id=turno_id)
+    # Usar cliente_nombre y cliente_celular
+    mensaje = f"Hola {turno.cliente_nombre}, recordamos tu turno..."
+    # ... lógica de Twilio ...
     
     contador = 0
     for cliente in clientes_aptos:

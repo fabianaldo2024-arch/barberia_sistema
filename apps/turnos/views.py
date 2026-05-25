@@ -18,8 +18,8 @@ def solicitar_turno(request):
             # 1. Notificación inmediata a recepción [3]
             # Pasamos los datos necesarios como un diccionario para la tarea de Celery
             datos_recepcion = {
-                'cliente': nuevo_turno.nombre_completo,
-                'celular': nuevo_turno.celular,
+                'cliente': nuevo_turno.cliente_nombre,
+                'celular': nuevo_turno.cliente_celular,
                 'barbero': nuevo_turno.barbero.nombre,
                 'fecha': nuevo_turno.fecha_hora.strftime('%d/%m/%Y'),
                 'hora': nuevo_turno.fecha_hora.strftime('%H:%M')

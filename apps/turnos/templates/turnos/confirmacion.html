@@ -9,11 +9,11 @@
                 <h1 class="display-6 text-success mb-4">✅ ¡Turno confirmado!</h1>
                 
                 <div class="info-box text-start bg-light p-4 rounded-3 mb-4 shadow-sm">
-                    <p class="mb-2"><strong>Cliente:</strong> {{ turno.cliente.nombre_completo }}</p>
-                    <p class="mb-2"><strong>Teléfono:</strong> {{ turno.cliente.celular }}</p>
+                    <p class="mb-2"><strong>Cliente:</strong> {{ turno.cliente_nombre}}</p>
+                    <p class="mb-2"><strong>Teléfono:</strong> {{ turno.cliente_celular }}</p>
                     <p class="mb-2"><strong>Barbero:</strong> {{ turno.barbero.nombre }}</p>
-                    <p class="mb-2"><strong>Fecha:</strong> {{ turno.fecha|date:"d/m/Y" }}</p>
-                    <p class="mb-0"><strong>Hora:</strong> {{ turno.hora|time:"H:i" }}</p>
+                    <p class="mb-2"><strong>Fecha:</strong> {{ turno.fecha_hora|date:"d/m/Y" }}</p>
+                    <p class="mb-0"><strong>Hora:</strong> {{ turno.fecha_hora|time:"H:i" }}</p>
                 </div>
 
                 <div class="alerts-section mb-4">
