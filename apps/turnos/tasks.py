@@ -6,8 +6,9 @@ from twilio.rest import Client
 from .models import Turno
 
 @shared_task
-def enviar_notificacion_recepcionista(turno_id):
-    """Envía un email inmediato a la recepción cuando se crea un turno."""
+def notificar_recepcionista_nuevo_turno(datos_turno):
+    # ... lógica de envío de mail por SMTP [3] ...
+    pass
     try:
         turno = Turno.objects.get(id=turno_id)
         asunto = "NUEVO TURNO REGISTRADO"
@@ -22,36 +23,38 @@ def enviar_notificacion_recepcionista(turno_id):
         return f"Email enviado para el turno {turno_id}"
     except Exception as e:
         return f"Error en email: {e}"
-
+#NUEVO
 @shared_task
-def enviar_recordatorio_turno(turno_id):
-    """Envía el recordatorio por Twilio 2 horas antes de la cita."""
+def enviar_promocion_masiva(texto_promo):
     try:
-        turno = Turno.objects.get(id=turno_id)
-        account_sid = os.getenv('TWILIO_ACCOUNT_SID')
-        auth_token = os.getenv('TWILIO_AUTH_TOKEN')
-        client = Client(account_sid, auth_token)
+        # Configuración del cliente de Twilio
+        client = Client(os.getenv('TWILIO_ACCOUNT_SID'), os.getenv('TWILIO_AUTH_TOKEN'))
+        
+        # Filtramos únicamente los clientes que dieron su consentimiento [1]
+        # El campo 'acepta_promociones' debe existir en tu modelo Turno
+        clientes_aptos = Turno.objects.filter(acepta_promociones=True).values('celular').distinct()
+        
+        contador_exitos = 0
+        for cliente in clientes_aptos:
+            try:
+                client.messages.create(
+                    body=texto_promo,
+                    from_=os.getenv('TWILIO_WHATSAPP_NUMBER'),
+                    to=f"whatsapp:{cliente['celular']}"
+                )
+                contador_exitos += 1
+            except Exception:
+                continue # Si falla un número, sigue con el siguiente
+                
+        return f"Campaña finalizada. Se enviaron {contador_exitos} mensajes."
 
-        cuerpo = (
-            f"Hola {turno.cliente_nombre}, recordatorio de tu turno:\n"
-            f"⏰ Hora: {turno.fecha_hora.strftime('%H:%M')}\n"
-            f"💈 Barbero: {turno.barbero.nombre}\n"
-            f"📍 Dirección: Calle Falsa 123"
-        )
-        client.messages.create(
-            body=cuerpo,
-            from_=os.getenv('TWILIO_PHONE_NUMBER'),
-            to=turno.cliente_celular
-        )
-        return f"Recordatorio enviado a {turno.cliente_celular}"
     except Exception as e:
-        return f"Error en Twilio: {e}"
-
+        return f"Error general en la campaña: {str(e)}"
+#NUEVO
 @shared_task
-def enviar_promocion_masiva(mensaje_texto):
-    """Envía promociones solo a clientes con consentimiento (Punto 5 especificación)."""
-    # Filtramos por consentimiento y evitamos duplicados de celular
-    clientes_aptos = Turno.objects.filter(acepta_promociones=True).distinct('cliente_celular')
+def enviar_recordatorio_whatsapp(turno_id):
+    # ... lógica de envío por Twilio/WhatsApp [3] ...
+    pass
     
     contador = 0
     for cliente in clientes_aptos:
