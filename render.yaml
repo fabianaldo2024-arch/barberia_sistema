@@ -1,5 +1,4 @@
-  # Servicio web: sirve el sitio Django
-  services:
+services:
   - type: web
     name: barberia-web
     runtime: python
@@ -23,38 +22,11 @@
           name: barberia-redis
           property: connectionString
 
-  # Redis: queda gratis y listo para cuando actives el worker de Celery
-  - type: redis
-    name: barberia-redis
-    plan: free
-    ipAllowList: []
-
-  # Worker de Celery: procesa las tareas en segundo plano (recordatorios)
-  - type: worker
-    name: barberia-worker
-    runtime: python
-    buildCommand: "poetry install --no-root"
-    startCommand: "poetry run celery -A core worker --loglevel=info"
-    envVars:
-      - key: SECRET_KEY
-        sync: false
-      - key: DATABASE_URL
-        fromDatabase:
-          name: barberia-db
-          property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: barberia-redis
-          property: connectionString
-
-  # Redis: el "mensajero" entre la web y el worker de Celery
   - type: redis
     name: barberia-redis
     plan: free
     ipAllowList: []
 
 databases:
-  # Base de datos PostgreSQL, reemplaza tu SQLite local
   - name: barberia-db
     plan: free
