@@ -30,11 +30,6 @@ services:
     plan: free
     ipAllowList: []
 
-databases:
-  # Base de datos PostgreSQL (recordá: gratis expira a los 30 días, hay que pasarla a pago antes)
-  - name: barberia-db
-    plan: free
-
   # Worker de Celery: procesa las tareas en segundo plano (recordatorios)
   - type: worker
     name: barberia-worker
