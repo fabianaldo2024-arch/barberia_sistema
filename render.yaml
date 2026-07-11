@@ -1,8 +1,10 @@
 services:
+  services:
   # Servicio web: sirve el sitio Django
   - type: web
     name: barberia-web
     runtime: python
+    plan: free
     buildCommand: "poetry install --no-root && poetry run python manage.py collectstatic --noinput && poetry run python manage.py migrate"
     startCommand: "poetry run gunicorn core.wsgi:application"
     envVars:
@@ -21,6 +23,17 @@ services:
           type: redis
           name: barberia-redis
           property: connectionString
+
+  # Redis: queda gratis y listo para cuando actives el worker de Celery
+  - type: redis
+    name: barberia-redis
+    plan: free
+    ipAllowList: []
+
+databases:
+  # Base de datos PostgreSQL (recordá: gratis expira a los 30 días, hay que pasarla a pago antes)
+  - name: barberia-db
+    plan: free
 
   # Worker de Celery: procesa las tareas en segundo plano (recordatorios)
   - type: worker
