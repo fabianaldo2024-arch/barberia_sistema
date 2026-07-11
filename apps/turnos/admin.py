@@ -1,11 +1,9 @@
 from django.contrib import admin
-
 from django.utils.html import format_html
 from django.templatetags.static import static
-
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
-from .models import Turno
+from .models import Turno, Barbero
 
 # Definimos qué datos se van a exportar (Recurso)
 class TurnoResource(resources.ModelResource):
@@ -26,8 +24,13 @@ class TurnoAdmin(ImportExportModelAdmin): # Cambiamos admin.ModelAdmin por este
     search_fields = ('cliente_nombre', 'cliente_celular')
     ordering = ('fecha_hora',)
 
-# NUEVO
+# Registro del modelo Barbero, para poder cargarlos desde el admin
+@admin.register(Barbero)
+class BarberoAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'especialidad')
+    search_fields = ('nombre',)
 
+# NUEVO
 # Personalización del encabezado del Admin
 admin.site.site_header = format_html(
     '<img src="{}" style="height: 40px; margin-right: 10px;"> Gestión de Barbería',

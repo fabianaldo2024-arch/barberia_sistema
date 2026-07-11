@@ -1,12 +1,40 @@
-# Python
+
+# --- Entorno y secretos ---
+.env
+*.env
+!.env.example
+
+# --- Python ---
 __pycache__/
 *.py[cod]
 *$py.class
+*.egg-info/
+.Python
+
+# --- Entornos virtuales ---
 .venv/
-.env
+venv/
+env/
 
-# Base de datos local [3]
+# --- Base de datos local ---
 db.sqlite3
+db.sqlite3-journal
 
-# Static files [10]
-static_root/
+# --- Archivos estáticos generados (NO el código fuente de static/) ---
+staticfiles/
+
+# --- Celery ---
+celerybeat-schedule
+celerybeat.pid
+
+# --- Traducciones compiladas (SÍ se ignoran los .mo, NO los .po) ---
+*.mo
+
+# --- Editor / SO ---
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# --- Logs ---
+*.log

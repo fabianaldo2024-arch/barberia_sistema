@@ -44,10 +44,6 @@ class Turno(models.Model):
     )
 
     def __str__(self):
-        return f"Turno de {self.cliente_nombre} - Consentimiento: {self.acepta_promociones}"
-
-
-    def __str__(self):
         return f"{self.cliente_nombre} - {self.fecha_hora}"
 
 

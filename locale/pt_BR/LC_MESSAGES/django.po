@@ -1,0 +1,77 @@
+# Translation for Barbería Sistema
+# Language: Portuguese (Brazil)
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: barberia-sistema 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-10 10:58-0300\n"
+"PO-Revision-Date: 2026-07-10 10:58-0300\n"
+"Last-Translator: perezman\n"
+"Language-Team: Portuguese (Brazil)\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: apps/turnos/forms.py:12
+msgid "DD/MM/YYYY HH:MM"
+msgstr "DD/MM/AAAA HH:MM"
+
+#: apps/turnos/forms.py:38
+msgid "De lunes a viernes atendemos de 09:00 a 19:00."
+msgstr "De segunda a sexta atendemos das 09:00 às 19:00."
+
+#: apps/turnos/forms.py:41
+msgid "Los sábados atendemos de 09:00 a 14:00."
+msgstr "Aos sábados atendemos das 09:00 às 14:00."
+
+#: apps/turnos/forms.py:43
+msgid "La barbería está cerrada los domingos."
+msgstr "A barbearia está fechada aos domingos."
+
+#: apps/turnos/forms.py:47
+#, python-format
+msgid "El barbero %(barbero)s ya tiene un turno a esa hora."
+msgstr "O barbeiro %(barbero)s já tem um horário marcado nesse horário."
+
+#: apps/turnos/templates/turnos/solicitar_turno.html:7
+msgid "Gestión de Turnos"
+msgstr "Gestão de Horários"
+
+#: apps/turnos/templates/turnos/solicitar_turno.html:26
+msgid "Logo PM"
+msgstr "Logo PM"
+
+#: apps/turnos/templates/turnos/solicitar_turno.html:33
+msgid "Reserva tu Turno"
+msgstr "Reserve seu Horário"
+
+#: apps/turnos/templates/turnos/solicitar_turno.html:39
+msgid "Cliente nombre:"
+msgstr "Nome do cliente:"
+
+#: apps/turnos/templates/turnos/solicitar_turno.html:43
+msgid "Cliente celular:"
+msgstr "Celular do cliente:"
+
+#: apps/turnos/templates/turnos/solicitar_turno.html:47
+msgid "Barbero:"
+msgstr "Barbeiro:"
+
+#: apps/turnos/templates/turnos/solicitar_turno.html:51
+msgid "Fecha hora:"
+msgstr "Data e hora:"
+
+#: apps/turnos/templates/turnos/solicitar_turno.html:53
+msgid "Formato: DD/MM/YYYY HH:MM"
+msgstr "Formato: DD/MM/AAAA HH:MM"
+
+#: apps/turnos/templates/turnos/solicitar_turno.html:57
+msgid "Acepta recibir promociones y novedades"
+msgstr "Aceito receber promoções e novidades"
+
+#: apps/turnos/templates/turnos/solicitar_turno.html:61
+msgid "Confirmar mi Turno"
+msgstr "Confirmar meu Horário"

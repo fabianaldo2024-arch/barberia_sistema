@@ -2,41 +2,46 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# 1. Cargar las variables de entorno desde el archivo .env [1]
+# Cargar variables de entorno
 load_dotenv()
 
-# 2. Definir la ruta base del proyecto (BASE_DIR)
+# Ruta base del proyecto
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 3. Configuración de seguridad utilizando os.getenv() [1]
-# El SECRET_KEY ya no está "hardcodeado" en el archivo
+# Seguridad
 SECRET_KEY = os.getenv('SECRET_KEY')
-
-# El modo DEBUG se activa solo si en el .env dice 'True'
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
-
-# Configura los dominios permitidos (en desarrollo puedes dejarlo así)
 ALLOWED_HOSTS = ['*']
 
-
-# Application definition
-
+# -------------------------------------------------------------------
+# APLICACIONES (unificadas, sin duplicados)
+# -------------------------------------------------------------------
 INSTALLED_APPS = [
+    # Django básico
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Terceros
+    'import_export',          # Exportar a Excel/CSV
+    'django_celery_beat',     # Periodicidad de recordatorios
+
+    # Tus apps
+    'apps.turnos',
+    'apps.comunicaciones',
 ]
 
+# -------------------------------------------------------------------
+# MIDDLEWARE (orden correcto, sin duplicados)
+# -------------------------------------------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # Debe ir aquí [2]
+    'whitenoise.middleware.WhiteNoiseMiddleware',   # Para archivos estáticos en producción
     'django.contrib.sessions.middleware.SessionMiddleware',
-    # ... resto de middlewares ...
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',    # ← NUEVO: necesario para i18n
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -49,7 +54,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')], # Esto le dice a Django que busque aquí
+        'DIRS': [BASE_DIR / 'templates'],   # Ruta global de plantillas
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -63,10 +68,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
+# -------------------------------------------------------------------
+# BASE DE DATOS
+# -------------------------------------------------------------------
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -74,100 +78,63 @@ DATABASES = {
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
+# -------------------------------------------------------------------
+# VALIDACIÓN DE CONTRASEÑAS
+# -------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
-
-LANGUAGE_CODE = 'es-ar' # O 'es-es' según tu país
-TIME_ZONE = 'America/Argentina/Buenos_Aires' # Ajusta a tu zona horaria
+# -------------------------------------------------------------------
+# INTERNACIONALIZACIÓN (i18n) - ¡NUEVO!
+# -------------------------------------------------------------------
+LANGUAGE_CODE = 'es-ar'                # Idioma por defecto
+TIME_ZONE = 'America/Argentina/Buenos_Aires'
 USE_I18N = True
-USE_L10N = True
+USE_L10N = True                        # Para formatos regionales
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
-STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-
-    # Tus aplicaciones del sistema de barbería
-    'apps.turnos',
-    'apps.comunicaciones',
+# Idiomas soportados (español y portugués)
+LANGUAGES = [
+    ('es', 'Español'),
+    ('pt-br', 'Português (Brasil)'),               # Puedes cambiar a 'pt-br' si prefieres
 ]
 
-# Configuración de Email SMTP
+# Ruta donde se guardarán los archivos de traducción (.po y .mo)
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',               # Crea esta carpeta en la raíz del proyecto
+]
+
+# -------------------------------------------------------------------
+# ARCHIVOS ESTÁTICOS
+# -------------------------------------------------------------------
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# -------------------------------------------------------------------
+# CAMPO POR DEFECTO
+# -------------------------------------------------------------------
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# -------------------------------------------------------------------
+# CONFIGURACIÓN DE EMAIL (SMTP)
+# -------------------------------------------------------------------
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'doalperez12@gmail.com'
-EMAIL_HOST_PASSWORD = 'tu-contraseña-de-aplicacion'
+EMAIL_HOST_PASSWORD = 'tu-contraseña-de-aplicacion'   # ¡Cambia esto!
 DEFAULT_FROM_EMAIL = 'Barbería Sistema <dolperez12@gmail.com>'
 
-# Configuración de Celery
+# -------------------------------------------------------------------
+# CELERY
+# -------------------------------------------------------------------
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_TIMEZONE = TIME_ZONE  # Usa la misma zona horaria de tu proyecto
-
-INSTALLED_APPS = [
-    # Aplicaciones básicas y obligatorias de Django
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-
-    # Tus aplicaciones locales
-    'apps.turnos',
-
-    # Librerías externas necesarias según los requisitos técnicos
-    'import_export',        # Para exportar clientes a Excel/CSV
-    'django_celery_beat',   # Para la periodicidad de los recordatorios de 2 horas
-]
-
-# NUEVO HOY
-
-import os
-
-# Carpeta donde se buscarán los archivos estáticos durante el desarrollo
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-
-# Carpeta donde Django "juntará" todos los archivos para producción
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Habilitar la compresión y el cacheado persistente de Whitenoise
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+CELERY_TIMEZONE = TIME_ZONE
