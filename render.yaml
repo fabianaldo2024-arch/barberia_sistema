@@ -1,4 +1,5 @@
   # Servicio web: sirve el sitio Django
+  services:
   - type: web
     name: barberia-web
     runtime: python
