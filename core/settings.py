@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+         
 
     # Terceros
     'import_export',          # Exportar a Excel/CSV
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     # Tus apps
     'apps.turnos',
     'apps.comunicaciones',
+    'licencias',
 ]
 
 # -------------------------------------------------------------------
@@ -46,6 +48,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',   # Para archivos estáticos en producción
     'django.contrib.sessions.middleware.SessionMiddleware',
+     'licencias.middleware.LicenciaMiddleware', 
     'django.middleware.locale.LocaleMiddleware',    # ← NUEVO: necesario para i18n
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -66,6 +69,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'licencias.context_processors.info_licencia',
             ],
         },
     },
@@ -133,9 +137,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'doalperez12@gmail.com'
-EMAIL_HOST_PASSWORD = 'tu-contraseña-de-aplicacion'   # ¡Cambia esto!
-DEFAULT_FROM_EMAIL = 'Barbería Sistema <dolperez12@gmail.com>'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = f'Barbería Sistema <{EMAIL_HOST_USER}>'
 
 # -------------------------------------------------------------------
 # CELERY
@@ -146,3 +150,5 @@ CELERY_TIMEZONE = TIME_ZONE
 REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
 CELERY_BROKER_URL = REDIS_URL
 CELERY_RESULT_BACKEND = REDIS_URL
+LICENCIA_SECRET_KEY = os.getenv('LICENCIA_SECRET_KEY')
+LICENCIA_CODIGO_ACTIVO = os.getenv('LICENCIA_CODIGO_ACTIVO')

@@ -38,3 +38,12 @@ celerybeat.pid
 
 # --- Logs ---
 *.log
+
+# --- Código fuente privado (backup antes de compilar) ---
+codigo_fuente_privado/
+*.c
+build/
+dist_ofuscado/
+
+# --- Backups de base de datos (contienen datos reales de clientes) ---
+db.sqlite3.backup*
