@@ -28,4 +28,4 @@ celerybeat.pid
 .idea/
 *.swp
 label:
-" > .gitignore
+" > .gitignore*.mo
