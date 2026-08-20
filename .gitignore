@@ -1,49 +1,31 @@
-
-# --- Entorno y secretos ---
-.env
-*.env
-!.env.example
-
-# --- Python ---
+echo "
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.egg-info/
+*.so
 .Python
-
-# --- Entornos virtuales ---
-.venv/
+.env
+.venv
 venv/
-env/
 
-# --- Base de datos local ---
-db.sqlite3
-db.sqlite3-journal
+# Bases de datos
+*.sqlite3
+*.db
+*.backup*
 
-# --- Archivos estáticos generados (NO el código fuente de static/) ---
+# Estáticos y media
 staticfiles/
+media/
 
-# --- Celery ---
+# Celery
 celerybeat-schedule
 celerybeat.pid
 
-# --- Traducciones compiladas (SÍ se ignoran los .mo, NO los .po) ---
-*.mo
-
-# --- Editor / SO ---
+# Temporales
+*.log
+*.tmp
 .vscode/
 .idea/
 *.swp
-.DS_Store
-
-# --- Logs ---
-*.log
-
-# --- Código fuente privado (backup antes de compilar) ---
-codigo_fuente_privado/
-*.c
-build/
-dist_ofuscado/
-
-# --- Backups de base de datos (contienen datos reales de clientes) ---
-db.sqlite3.backup*
+label:
+" > .gitignore
