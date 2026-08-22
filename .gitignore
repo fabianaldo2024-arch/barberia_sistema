@@ -1,32 +1,32 @@
-echo "
 # Python
+*.pyc
 __pycache__/
-*.py[cod]
-*.so
-.Python
-.env
-.venv
 venv/
-
-# Bases de datos
+env/
+.env
 *.sqlite3
-*.db
-*.backup*
 
-# Estáticos y media
-staticfiles/
-media/
-
-# Celery
-celerybeat-schedule
-celerybeat.pid
-
-# Temporales
+# Django
 *.log
-*.tmp
-.vscode/
-.idea/
-*.swp
-label:
-" > .gitignore*.mo
-poetry.lock
+*.pot
+*.pyc
+local_settings.py
+db.sqlite3
+media/
+staticfiles/
+
+# Entornos virtuales
+venv/
+env/
+
+.env
+.envrc
+*.mo
+__pycache__/
+db.sqlite3
+
+
+# Archivos de configuración sensibles
+.env
+.secrets
+config.env
