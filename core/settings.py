@@ -6,50 +6,48 @@ import dj_database_url
 # Cargar variables de entorno
 load_dotenv()
 
-# Ruta base del proyecto
+# ============================================================================
+# DEFINICIONES BASE
+# ============================================================================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Seguridad
-SECRET_KEY = os.getenv('SECRET_KEY')
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-clave-temporal-no-usar-en-produccion')
+DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',') if os.getenv('ALLOWED_HOSTS') else []
 
-RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
-
-# -------------------------------------------------------------------
-# APLICACIONES (unificadas, sin duplicados)
-# -------------------------------------------------------------------
+# ============================================================================
+# APLICACIONES INSTALADAS
+# ============================================================================
 INSTALLED_APPS = [
-    # Django básico
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-         
 
-    # Terceros
-    'import_export',          # Exportar a Excel/CSV
-    'django_celery_beat',     # Periodicidad de recordatorios
+    # Aplicaciones de terceros (si las usas)
+    'django_celery_beat',
+    'django_celery_results',
+    'import_export',
 
-    # Tus apps
-    'apps.turnos',
-    'apps.comunicaciones',
-    'licencias',
+    # TUS PROPIAS APLICACIONES
+    # REVISA LAS CARPETAS DE TU PROYECTO Y AJUSTA ESTOS NOMBRES
+    'core',          # App principal (donde está settings.py)
+    'apps.turnos',      # COMENTADA porque NO existe en tu proyecto
+    # 'licencias',   # COMENTADA porque NO existe en tu proyecto
+    # Agrega aquí tus aplicaciones reales, ejemplo: 'gestion', 'usuarios', etc.
 ]
 
-# -------------------------------------------------------------------
-# MIDDLEWARE (orden correcto, sin duplicados)
-# -------------------------------------------------------------------
+# ============================================================================
+# MIDDLEWARE
+# ============================================================================
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',   # Para archivos estáticos en producción
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-     'licencias.middleware.LicenciaMiddleware', 
-    'django.middleware.locale.LocaleMiddleware',    # ← NUEVO: necesario para i18n
+    # 'licencias.middleware.LicenciaMiddleware',   # COMENTADO PARA DESARROLLO
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -57,39 +55,49 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# ============================================================================
+# URLS Y WSGI
+# ============================================================================
 ROOT_URLCONF = 'core.urls'
+WSGI_APPLICATION = 'core.wsgi.application'
 
+# ============================================================================
+# TEMPLATES
+# ============================================================================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],   # Ruta global de plantillas
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'licencias.context_processors.info_licencia',
+                # 'licencias.context_processors.info_licencia',  # COMENTADO porque no existe
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
-
-# -------------------------------------------------------------------
+# ============================================================================
 # BASE DE DATOS
-# -------------------------------------------------------------------
-DATABASES = {
-    'default': dj_database_url.config(
-        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
-        conn_max_age=600,
-    )
-}
+# ============================================================================
+if os.getenv('DATABASE_URL'):
+    DATABASES = {
+        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
-# -------------------------------------------------------------------
+# ============================================================================
 # VALIDACIÓN DE CONTRASEÑAS
-# -------------------------------------------------------------------
+# ============================================================================
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -97,58 +105,56 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# -------------------------------------------------------------------
-# INTERNACIONALIZACIÓN (i18n) - ¡NUEVO!
-# -------------------------------------------------------------------
-LANGUAGE_CODE = 'es-ar'                # Idioma por defecto
+# ============================================================================
+# INTERNACIONALIZACIÓN Y LOCALIZACIÓN
+# ============================================================================
+LANGUAGE_CODE = 'es-ar'
 TIME_ZONE = 'America/Argentina/Buenos_Aires'
 USE_I18N = True
-USE_L10N = True                        # Para formatos regionales
+USE_L10N = True
 USE_TZ = True
 
-# Idiomas soportados (español y portugués)
 LANGUAGES = [
     ('es', 'Español'),
-    ('pt-br', 'Português (Brasil)'),               # Puedes cambiar a 'pt-br' si prefieres
+    ('pt-br', 'Português (Brasil)'),
 ]
 
-# Ruta donde se guardarán los archivos de traducción (.po y .mo)
 LOCALE_PATHS = [
-    BASE_DIR / 'locale',               # Crea esta carpeta en la raíz del proyecto
+    BASE_DIR / 'locale',
 ]
 
-# -------------------------------------------------------------------
+# ============================================================================
 # ARCHIVOS ESTÁTICOS
-# -------------------------------------------------------------------
+# ============================================================================
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# -------------------------------------------------------------------
+# ============================================================================
 # CAMPO POR DEFECTO
-# -------------------------------------------------------------------
+# ============================================================================
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# -------------------------------------------------------------------
+# ============================================================================
 # CONFIGURACIÓN DE EMAIL (SMTP)
-# -------------------------------------------------------------------
+# ============================================================================
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = f'Barbería Sistema <{EMAIL_HOST_USER}>'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = f'Barbería Sistema <{EMAIL_HOST_USER}>' if EMAIL_HOST_USER else 'Barbería Sistema'
 
-# -------------------------------------------------------------------
+# ============================================================================
 # CELERY
-# -------------------------------------------------------------------
+# ============================================================================
 CELERY_TIMEZONE = TIME_ZONE
-
-# En producción, Render va a proveer REDIS_URL automáticamente
 REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
 CELERY_BROKER_URL = REDIS_URL
 CELERY_RESULT_BACKEND = REDIS_URL
-LICENCIA_SECRET_KEY = os.getenv('LICENCIA_SECRET_KEY')
-LICENCIA_CODIGO_ACTIVO = os.getenv('LICENCIA_CODIGO_ACTIVO')
+
+# Variables adicionales (opcionales)
+LICENCIA_SECRET_KEY = os.getenv('LICENCIA_SECRET_KEY', '')
+LICENCIA_CODIGO_ACTIVO = os.getenv('LICENCIA_CODIGO_ACTIVO', '')

@@ -1,0 +1,103 @@
+{% comment %}
+NUEVO: template del recibo/comprobante.
+
+Nota sobre qué datos se muestran:
+  - Al cliente le mostramos: servicio, barbero, fecha, monto, método de
+    pago. Eso es lo que necesita como constancia de que pagó.
+  - NO mostramos pago.comision_barbero() en ningún lado visible: la
+    comisión es un dato interno del negocio (cuánto se lleva el barbero),
+    no algo que el cliente necesite ver en su comprobante. Si en el
+    futuro agregás una vista de "reporte para el dueño", ahí sí tiene
+    sentido mostrarla.
+{% endcomment %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Comprobante #{{ pago.id }}</title>
+    <style>
+        :root {
+            --tinta: #1a1a1a;
+            --gris: #666;
+            --linea: #ddd;
+            --acento: #e63946;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: var(--tinta);
+            background: #f4f4f4;
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .comprobante {
+            max-width: 480px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid var(--linea);
+            border-radius: 8px;
+            padding: 32px;
+        }
+        .encabezado {
+            text-align: center;
+            border-bottom: 2px solid var(--tinta);
+            padding-bottom: 16px;
+            margin-bottom: 20px;
+        }
+        .encabezado h1 {
+            font-size: 20px;
+            margin: 0 0 4px 0;
+            letter-spacing: 0.5px;
+        }
+        .encabezado p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--gris);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .aviso-legal {
+            font-size: 10px;
+            color: var(--gris);
+            text-align: center;
+            margin: 8px 0 0 0;
+            font-style: italic;
+        }
+        .fila {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--linea);
+            font-size: 14px;
+        }
+        .fila span:first-child { color: var(--gris); }
+        .fila span:last-child { font-weight: 600; text-align: right; }
+        .total {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0 0 0;
+            margin-top: 8px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .total span:last-child { color: var(--acento); }
+        .pie {
+            text-align: center;
+            font-size: 11px;
+            color: var(--gris);
+            margin-top: 24px;
+        }
+        .btn-imprimir {
+            display: block;
+            width: 100%;
+            margin-top: 24px;
+            padding: 12px;
+            background: var(--tinta);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        @media print {
+            body {

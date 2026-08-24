@@ -15,24 +15,26 @@ def limpiar_turnos_viejos():
     cantidad, _ = Turno.objects.filter(fecha_hora__lt=ahora).delete()
     return f"Se han eliminado {cantidad} turnos antiguos."
 
+
+# =============================================================================
 @shared_task
 def notificar_recepcionista_nuevo_turno(datos_turno):
-    # ... lógica de envío de mail por SMTP [3] ...
-    pass
     try:
-        turno = Turno.objects.get(id=turno_id)
         asunto = "NUEVO TURNO REGISTRADO"
         mensaje = (
             f"Se ha registrado un nuevo turno:\n\n"
-            f"👤 Cliente: {turno.cliente_nombre}\n"
-            f"📞 Celular: {turno.cliente_celular}\n"
-            f"💈 Barbero: {turno.barbero.nombre}\n"
-            f"📅 Fecha y Hora: {turno.fecha_hora.strftime('%d/%m/%Y %H:%M')}"
+            f"👤 Cliente: {datos_turno.get('cliente', '')}\n"
+            f"📞 Celular: {datos_turno.get('celular', '')}\n"
+            f"💈 Barbero: {datos_turno.get('barbero', '')}\n"
+            f"📅 Fecha: {datos_turno.get('fecha', '')}\n"
+            f"🕒 Hora: {datos_turno.get('hora', '')}"
         )
         send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, ['recepcion@tubarberia.com'])
-        return f"Email enviado para el turno {turno_id}"
+        return f"Email enviado para el turno de {datos_turno.get('cliente', 'cliente desconocido')}"
     except Exception as e:
         return f"Error en email: {e}"
+
+
 #NUEVO
 @shared_task
 def enviar_promocion_masiva(texto_promo):
@@ -60,6 +62,8 @@ def enviar_promocion_masiva(texto_promo):
 
     except Exception as e:
         return f"Error general en la campaña: {str(e)}"
+
+
 #NUEVO
 @shared_task
 def enviar_recordatorio_whatsapp(turno_id):
