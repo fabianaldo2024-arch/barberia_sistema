@@ -19,6 +19,7 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',') if os.getenv('ALLOWED_
 # APLICACIONES INSTALADAS
 # ============================================================================
 INSTALLED_APPS = [
+    'admin_interface', 'colorfield',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -31,13 +32,14 @@ INSTALLED_APPS = [
     'django_celery_results',
     'import_export',
 
-    # TUS PROPIAS APLICACIONES
-    # REVISA LAS CARPETAS DE TU PROYECTO Y AJUSTA ESTOS NOMBRES
-    'core',          # App principal (donde está settings.py)
-    'apps.turnos',      # COMENTADA porque NO existe en tu proyecto
-    # 'licencias',   # COMENTADA porque NO existe en tu proyecto
-    # Agrega aquí tus aplicaciones reales, ejemplo: 'gestion', 'usuarios', etc.
+
+    'core',
+    'apps.turnos',
+    'apps.comunicaciones',   # <-- AGREGAR esta línea
+    # 'licencias',   # la dejamos comentada por ahora, la activamos en el paso 2 de tu plan
 ]
+
+
 
 # ============================================================================
 # MIDDLEWARE
@@ -74,6 +76,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.contrib.messages.context_processors.messages',
+                'apps.turnos.context_processors.branding',
                 # 'licencias.context_processors.info_licencia',  # COMENTADO porque no existe
             ],
         },
@@ -158,3 +162,13 @@ CELERY_RESULT_BACKEND = REDIS_URL
 # Variables adicionales (opcionales)
 LICENCIA_SECRET_KEY = os.getenv('LICENCIA_SECRET_KEY', '')
 LICENCIA_CODIGO_ACTIVO = os.getenv('LICENCIA_CODIGO_ACTIVO', '')
+
+# ============================================================================
+# BRANDING (personalizable por cliente sin tocar código ni HTML)
+# ============================================================================
+BRANDING = {
+    'nombre_negocio': os.getenv('NOMBRE_NEGOCIO', 'PJM Barbería'),
+    'logo_static_path': os.getenv('LOGO_STATIC_PATH', 'img/logo_barberia.png'),
+    'color_primario': os.getenv('COLOR_PRIMARIO', '#e63946'),
+    'color_acento': os.getenv('COLOR_ACENTO', '#1a1a1a'),
+}

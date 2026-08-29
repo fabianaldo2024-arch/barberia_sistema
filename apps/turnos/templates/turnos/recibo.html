@@ -20,7 +20,7 @@ Nota sobre qué datos se muestran:
             --tinta: #1a1a1a;
             --gris: #666;
             --linea: #ddd;
-            --acento: #e63946;
+            --acento: {{ color_primario }};
         }
         * { box-sizing: border-box; }
         body {
@@ -100,4 +100,51 @@ Nota sobre qué datos se muestran:
             cursor: pointer;
         }
         @media print {
-            body {
+            body {            .btn-imprimir { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="comprobante">
+        <div class="encabezado">
+            <h1>{{ nombre_negocio }}</h1>
+            <p>Comprobante de pago</p>
+            <p class="aviso-legal">Este comprobante es un recibo interno, no es una factura fiscal (AFIP/ARCA).</p>
+        </div>
+
+        <div class="fila">
+            <span>Cliente</span>
+            <span>{{ pago.turno.cliente_nombre }}</span>
+        </div>
+        <div class="fila">
+            <span>Barbero</span>
+            <span>{{ pago.turno.barbero.nombre }}</span>
+        </div>
+        <div class="fila">
+            <span>Servicio</span>
+            <span>{% if pago.turno.servicio %}{{ pago.turno.servicio.nombre }}{% else %}No especificado{% endif %}</span>
+        </div>
+        <div class="fila">
+            <span>Fecha del turno</span>
+            <span>{{ pago.turno.fecha_hora|date:"d/m/Y H:i" }}</span>
+        </div>
+        <div class="fila">
+            <span>Método de pago</span>
+            <span>{{ pago.get_metodo_pago_display }}</span>
+        </div>
+        <div class="fila">
+            <span>Fecha de pago</span>
+            <span>{{ pago.fecha_pago|date:"d/m/Y H:i" }}</span>
+        </div>
+
+        <div class="total">
+            <span>Total</span>
+            <span>${{ pago.monto }}</span>
+        </div>
+
+        <button class="btn-imprimir" onclick="window.print()">Imprimir / Guardar como PDF</button>
+
+        <p class="pie">Comprobante #{{ pago.id }} — Gracias por su visita</p>
+    </div>
+</body>
+</html>
